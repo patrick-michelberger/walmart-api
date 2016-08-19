@@ -25,6 +25,22 @@ function _feed(options, feed, key, category) {
   return _get(options, url);
 }
 
+function _paginate(options, category, brand, key, extras) {
+  var url = "//api.walmartlabs.com/v1/paginated/items?apiKey=" + key;
+  if (category) {
+    url += "&category=" + category;
+  }
+  if (brand) {
+    url += "&brand=" + brand;
+  }
+  if (extras) {
+    for (var k in extras) {
+      url += "&" + k + "=" + escape(extras[k]);
+    }
+  }
+  return _get(options, url);
+}
+
 module.exports = function(key, options) {
   return {
     getItem: function(itemID, terra) {
@@ -100,6 +116,12 @@ module.exports = function(key, options) {
         }
         return _get({}, url);
       }
+    },
+    paginateByCategory: function(category, extras) {
+      return _paginate(options, category, null, key, extras);
+    },
+    paginateByBrand: function(brand, extras) {
+      return _paginate(options, null, brand, key, extras);
     }
   }
 };

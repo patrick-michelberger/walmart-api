@@ -216,4 +216,44 @@ describe('walmart', function() {
       done();
     });
   });
+
+	it('should allow for paginated products by category', function(done) {
+		nock('https://api.walmartlabs.com')
+      .get('/v1/paginated/items?apiKey=***key***&category=1234')
+      .reply(200, good);
+		walmart.paginateByCategory('1234').then(function(data) {
+			expect(data.foo).to.equal("bar");
+			done();
+		});
+	});
+
+	it('should allow for paginated products by category with extras', function(done) {
+		nock('https://api.walmartlabs.com')
+			.get('/v1/paginated/items?apiKey=***key***&category=1234&brand=foo')
+			.reply(200, good);
+		walmart.paginateByCategory('1234', { 'brand': 'foo' }).then(function(data) {
+			expect(data.foo).to.equal('bar');
+			done();
+		});
+	});
+
+	it('should allow for paginated products by brand', function(done) {
+		nock('https://api.walmartlabs.com')
+			.get('/v1/paginated/items?apiKey=***key***&brand=foo')
+			.reply(200, good);
+		walmart.paginateByBrand('foo').then(function(data) {
+			expect(data.foo).to.equal('bar');
+			done();
+		});
+	});
+
+	it('should allow for paginated products by brand with extras', function(done) {
+		nock('https://api.walmartlabs.com')
+			.get('/v1/paginated/items?apiKey=***key***&brand=foo&specialOffer=rollback')
+			.reply(200, good);
+		walmart.paginateByBrand('foo', { 'specialOffer': 'rollback' }).then(function(data) {
+			expect(data.foo).to.equal('bar');
+			done();
+		});
+	});
 });

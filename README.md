@@ -108,3 +108,11 @@ Returns an array of items of the value of the day items on the specified categor
 ### walmart.feeds.trending(categoryId)
 
 Returns an array of items of the trending items on the specified category.
+
+### walmart.paginateByCategory(categoryId, extras)
+
+Returns the product catalog on the specified category in a paginated fashion.
+
+### walmart.paginateByBrand(brand, extras)
+
+Returns the product catalog on the specified brand in a paginated fashion.
