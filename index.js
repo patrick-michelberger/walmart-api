@@ -25,7 +25,7 @@ function _feed(options, feed, key, category) {
   return _get(options, url);
 }
 
-function _paginate(options, category, brand, key, extras) {
+function _paginate(options, category, brand, key, extras, callback) {
   var url = "//api.walmartlabs.com/v1/paginated/items?apiKey=" + key;
   if (category) {
     url += "&category=" + category;
@@ -38,7 +38,26 @@ function _paginate(options, category, brand, key, extras) {
       url += "&" + k + "=" + escape(extras[k]);
     }
   }
-  return _get(options, url);
+  if (options && options.nextPage) {
+    url =  "//api.walmartlabs.com" + options.nextPage;
+  }
+  return _get(options, url).then(function(response) {
+      if (response.nextPage) {
+        options = options || {};
+        options.nextPage = response.nextPage;
+        response.next = function() {
+          _paginate(options, null, null, null, null, callback);
+        }
+      }
+      callback(response);
+      return response;
+  });
+}
+
+function _callback(arg) {
+  var args = [].slice.call(arg),
+      callback = typeof args[args.length - 1] === 'function' && args.pop() || function() {};
+  return callback;
 }
 
 module.exports = function(key, options) {
@@ -118,10 +137,10 @@ module.exports = function(key, options) {
       }
     },
     paginateByCategory: function(category, extras) {
-      return _paginate(options, category, null, key, extras);
+      return _paginate(options, category, null, key, extras, _callback(arguments));
     },
-    paginateByBrand: function(brand, extras) {
-      return _paginate(options, null, brand, key, extras);
+    paginateByBrand: function(brand, extras, callback) {
+      return _paginate(options, null, brand, key, extras, _callback(arguments));
     }
   }
 };

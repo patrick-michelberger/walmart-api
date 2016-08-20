@@ -1,10 +1,17 @@
 /*global fetch*/
 "use strict";
 
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var spies = require('chai-spies');
 var nock = require('nock');
 var good = '{"foo":"bar"}';
+var pagination1 = '{"nextPage":"/v1/paginated/items?category=1234&maxId=11334&apiKey=***key***","items":[' + good + ']}';
+var pagination2 = '{"nextPage":"/v1/paginated/items?category=1234&maxId=11434&apiKey=***key***","items":[' + good + ']}';
+var paginationEnd = '{"items":[' + good + ']}';
 var walmart = require('../index.js')('***key***');
+
+chai.use(spies);
 
 describe('walmart', function() {
 	it('should allow for a product get', function(done) {
@@ -256,4 +263,28 @@ describe('walmart', function() {
 			done();
 		});
 	});
+
+	it('should allow for recursive callback pagination', function(done) {
+		nock('https://api.walmartlabs.com')
+			.get('/v1/paginated/items?apiKey=***key***&category=1234')
+			.reply(200, pagination1);
+		nock('https://api.walmartlabs.com')
+			.get('/v1/paginated/items?category=1234&maxId=11334&apiKey=***key***')
+			.reply(200, pagination2);
+		nock('https://api.walmartlabs.com')
+			.get('/v1/paginated/items?category=1234&maxId=11434&apiKey=***key***')
+			.reply(200, paginationEnd);
+		walmart.paginateByCategory('1234', responseCallback);
+		const spy = chai.spy();
+		function responseCallback(response) {
+			if (response.nextPage) {
+				spy();
+				response.next();
+			} else {
+				expect(spy).to.have.been.called.twice;
+				done();
+			}
+		};
+	});
+
 });
