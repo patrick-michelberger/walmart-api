@@ -16,12 +16,20 @@ walmart.feeds.trending().then(function(data) {
   console.log("Trending found " + data.items.length + " items");
 });
 
-walmart.paginateByCategory("976759").then(function(data) {
-    console.log(data.items.length + " items received from category " + data.category);
-    console.log("Next page URL " + data.nextPage);
+walmart.paginateByCategory("976759", function(response) {
+    console.log(response.items.length + " items received from the category " + response.category);
+    // check if more products are available?
+    if (response.nextPage) {
+      // this will recursively go to this same callback
+      response.next();
+    }
 });
 
-walmart.paginateByBrand("apple").then(function(data) {
-    console.log(data.items.length + " items received from brand " + data.brand);
-    console.log("Next page URL " + data.nextPage);
+walmart.paginateByBrand("apple", function(response) {
+    console.log(response.items.length + " items received from the brand " + response.brand);
+    // check if more products are available?
+    if (response.nextPage) {
+      // this will recursively go to this same callback
+      response.next();
+    }
 });

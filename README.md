@@ -109,10 +109,30 @@ Returns an array of items of the value of the day items on the specified categor
 
 Returns an array of items of the trending items on the specified category.
 
-### walmart.paginateByCategory(categoryId, extras)
+### walmart.paginateByCategory(categoryId, extras, callback)
 
-Returns the product catalog on the specified category in a paginated fashion.
+Returns the product catalog on the specified category in a paginated fashion. Use the `response.next()` helper function to fetch the next page of results.
 
-### walmart.paginateByBrand(brand, extras)
+```javascript
+walmart.paginateByCategory("976759", function(response) {
+    // check if more products are available?
+    if (response.nextPage) {
+      // this will recursively go to this same callback
+      response.next();
+    }
+});
+```
 
-Returns the product catalog on the specified brand in a paginated fashion.
+### walmart.paginateByBrand(brand, extras, callback)
+
+Returns the product catalog on the specified brand in a paginated fashion. Use the `response.next()` helper function to fetch the next page of results.
+
+```javascript
+walmart.paginateByCategory("apple", function(response) {
+    // check if more products are available?
+    if (response.nextPage) {
+      // this will recursively go to this same callback
+      response.next();
+    }
+});
+```
