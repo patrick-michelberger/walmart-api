@@ -128,7 +128,7 @@ walmart.paginateByCategory("976759", function(response) {
 Returns the product catalog on the specified brand in a paginated fashion. Use the `response.next()` helper function to fetch the next page of results.
 
 ```javascript
-walmart.paginateByCategory("apple", function(response) {
+walmart.paginateByBrand("apple", function(response) {
     // check if more products are available?
     if (response.nextPage) {
       // this will recursively go to this same callback
