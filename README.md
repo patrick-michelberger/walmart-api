@@ -114,8 +114,9 @@ Returns an array of items of the trending items on the specified category.
 Returns the product catalog on the specified category in a paginated fashion. Use the `response.next()` helper function to fetch the next page of results.
 
 ```javascript
+var items = [];
 walmart.paginateByCategory("976759", function(response) {
-    // check if more products are available?
+    items = items.concat(response.items);
     if (response.nextPage) {
       // this will recursively go to this same callback
       response.next();
@@ -128,8 +129,9 @@ walmart.paginateByCategory("976759", function(response) {
 Returns the product catalog on the specified brand in a paginated fashion. Use the `response.next()` helper function to fetch the next page of results.
 
 ```javascript
+var items = [];
 walmart.paginateByBrand("apple", function(response) {
-    // check if more products are available?
+    items = items.concat(response.items);
     if (response.nextPage) {
       // this will recursively go to this same callback
       response.next();
